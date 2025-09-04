@@ -1,10 +1,12 @@
 name: CI & Publish (Verbose)
 
 on:
-  push:
+  # Run tests on PRs targeting main
+  pull_request:
     branches:
       - main
-  pull_request:
+  # Run publish on any push to main
+  push:
     branches:
       - main
 
@@ -37,9 +39,10 @@ jobs:
           node tests.js
 
   publish:
+    # Only run this job on pushes to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
