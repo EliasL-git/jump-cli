@@ -1,11 +1,9 @@
-name: CI & Publish (Verbose)
+name: CI & Publish (Verbose & Fixed)
 
 on:
-  # Run tests on PRs targeting main
   pull_request:
     branches:
       - main
-  # Run publish on any push to main
   push:
     branches:
       - main
@@ -31,7 +29,7 @@ jobs:
           npm -v
           npm config list
 
-      - name: Install dependencies and run tests (verbose)
+      - name: Install dependencies and run tests
         run: |
           echo "=== Installing dependencies ==="
           npm ci --verbose
@@ -47,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-          fetch-depth: 0   # needed for tags and version bump
+          fetch-depth: 0
 
       - name: Show current directory & files
         run: |
@@ -61,13 +59,15 @@ jobs:
         with:
           node-version: '20'
           registry-url: https://registry.npmjs.org/
-      - run: |
-          echo "=== Node & npm Versions After Setup ==="
+
+      - name: Show Node & npm versions after setup
+        run: |
+          echo "=== Node & npm Versions ==="
           node -v
           npm -v
           npm config list
 
-      - name: Configure Git (verbose)
+      - name: Configure Git
         run: |
           echo "=== Configuring Git ==="
           git config --list
@@ -75,13 +75,13 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config --list
 
-      - name: Show current git status
+      - name: Show git status
         run: |
           echo "=== Git Status Before Version Bump ==="
           git status
           git log -n 3 --oneline
 
-      - name: Bump version and push (verbose)
+      - name: Bump version and push
         run: |
           echo "=== Current package version ==="
           cat package.json | grep '"version"'
@@ -93,15 +93,20 @@ jobs:
           echo "=== Pushing to main ==="
           git push origin main --follow-tags --verbose
 
-      - name: Publish to npm (fully verbose)
+      - name: NPM debug info
+        run: |
+          echo "=== NPM Debug Info ==="
+          npm whoami || echo "Token not valid"
+          npm config list
+
+      - name: Publish to npm
         run: |
           echo "=== Publishing to npm ==="
-          npm whoami
           npm publish --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create GitHub release (verbose)
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           files: |
