@@ -32,7 +32,7 @@ A Node.js CLI tool to bookmark directories and files with aliases for quick navi
 ### Global Installation (when published)
 
 ```bash
-npm install -g jump-cli
+npm install -g jump-cli-beta
 ```
 
 ## Usage
