@@ -13,6 +13,8 @@ A Node.js CLI tool to bookmark directories and files with aliases for quick navi
 
 ### Development Setup
 
+# !! Make SURE to run npm test BEFORE commiting to git. !!
+
 1. Clone the repository:
    ```bash
    git clone <repository-url>

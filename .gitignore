@@ -89,3 +89,14 @@ logs
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project-specific test files
+/tmp/jump-test*
+*.test.json

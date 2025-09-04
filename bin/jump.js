@@ -8,7 +8,7 @@ const program = new Command();
 const commands = new Commands();
 
 program
-    .name('jump')
+    .name('jump-cli-beta')
     .description('CLI tool to bookmark directories and files with aliases for quick navigation')
     .version(packageJson.version);
 
