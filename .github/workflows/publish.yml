@@ -1,4 +1,4 @@
-name: CI & Publish (Fixed & Non-Spamming)
+name: CI & Publish (Fixed & Safe)
 
 on:
   pull_request:
@@ -14,6 +14,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Show Node & npm versions
+        run: |
+          echo "=== Node & npm Versions ==="
+          node -v
+          npm -v
+          npm config list
 
       - name: Install dependencies and run tests
         run: |
@@ -33,21 +40,49 @@ jobs:
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Show Node & npm versions
+        run: |
+          echo "=== Node & npm Versions ==="
+          node -v
+          npm -v
+          npm config list
+
+      - name: Configure Git for version bump
+        run: |
+          echo "=== Configuring Git ==="
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --list
+
       - name: Install dependencies
         run: npm ci --verbose
 
       - name: Bump version and push
         id: bump-version
         run: |
+          echo "=== Current package version ==="
+          cat package.json | grep '"version"'
+          echo "=== Bumping patch version ==="
           NEW_VERSION=$(npm version patch --git-tag-version --verbose)
           echo "new_version=${NEW_VERSION#v}" >> $GITHUB_OUTPUT
+          echo "=== Git status after version bump ==="
+          git status
+          git log -n 3 --oneline
+          echo "=== Pushing to main ==="
           git push origin main --follow-tags --verbose
 
       - name: Clean old tags
         run: |
+          echo "=== Deleting old Git tags except latest ==="
           LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
           git tag | grep -v "$LATEST_TAG" | xargs -n 1 git tag -d || echo "No local tags to delete"
           git tag -l | grep -v "$LATEST_TAG" | xargs -n 1 git push origin --delete || echo "No remote tags to delete"
+
+      - name: NPM debug info
+        run: |
+          echo "=== NPM Debug Info ==="
+          npm whoami || echo "Token not valid"
+          npm config list
 
       - name: Publish to npm
         run: |
@@ -64,3 +99,8 @@ jobs:
           tag_name: "v${{ steps.bump-version.outputs.new_version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List dist folder
+        run: |
+          echo "=== Contents of dist/ ==="
+          ls -la dist/
