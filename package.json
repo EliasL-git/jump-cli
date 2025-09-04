@@ -1,6 +1,6 @@
 {
   "name": "jump-cli-beta",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "description": "THIS DESCRIBTION IS CHANGED AS A TEST!!! WILL BE REVERTED IN .06",
   "main": "bin/jump.js",
   "bin": {
