@@ -1,7 +1,7 @@
 {
   "name": "jump-cli-beta",
-  "version": "1.0.3",
-  "description": "A Node.js CLI tool to bookmark directories and files with aliases for quick navigation",
+  "version": "1.0.4",
+  "description": "THIS DESCRIBTION IS CHANGED AS A TEST!!! WILL BE REVERTED IN .06",
   "main": "bin/jump.js",
   "bin": {
     "jump-cli-beta": "bin/jump.js"
