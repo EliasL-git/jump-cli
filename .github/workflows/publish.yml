@@ -43,10 +43,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code (with push permissions)
+      - name: Checkout code (with PAT)
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
           fetch-depth: 0   # needed for tags and version bump
 
       - name: Show current directory & files
