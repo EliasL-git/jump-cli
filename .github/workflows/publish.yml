@@ -1,4 +1,4 @@
-name: CI & Publish
+name: CI & Publish (Verbose)
 
 on:
   push:
@@ -12,10 +12,28 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies and run tests
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show current directory & files
         run: |
-          npm ci
+          echo "=== Test Job: Current Directory ==="
+          pwd
+          echo "=== Listing files ==="
+          ls -la
+
+      - name: Show Node & npm versions
+        run: |
+          echo "=== Node & npm Versions ==="
+          node -v
+          npm -v
+          npm config list
+
+      - name: Install dependencies and run tests (verbose)
+        run: |
+          echo "=== Installing dependencies ==="
+          npm ci --verbose
+          echo "=== Running tests ==="
           node tests.js
 
   publish:
@@ -23,33 +41,70 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show current directory & files
+        run: |
+          echo "=== Publish Job: Current Directory ==="
+          pwd
+          echo "=== Listing files ==="
+          ls -la
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: https://registry.npmjs.org/
+      - run: |
+          echo "=== Node & npm Versions After Setup ==="
+          node -v
+          npm -v
+          npm config list
 
-      - name: Configure Git
+      - name: Configure Git (verbose)
         run: |
+          echo "=== Configuring Git ==="
+          git config --list
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --list
 
-      - name: Bump version and push
+      - name: Show current git status
         run: |
-          npm version patch
-          git push origin main --follow-tags
+          echo "=== Git Status Before Version Bump ==="
+          git status
+          git log -n 3 --oneline
 
-      - name: Publish to npm
-        run: npm publish
+      - name: Bump version and push (verbose)
+        run: |
+          echo "=== Current package version ==="
+          cat package.json | grep '"version"'
+          echo "=== Bumping patch version ==="
+          npm version patch --git-tag-version --verbose
+          echo "=== Git status after version bump ==="
+          git status
+          git log -n 3 --oneline
+          echo "=== Pushing to main ==="
+          git push origin main --follow-tags --verbose
+
+      - name: Publish to npm (fully verbose)
+        run: |
+          echo "=== Publishing to npm ==="
+          npm whoami
+          npm publish --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create GitHub release
+      - name: Create GitHub release (verbose)
         uses: ghcr.io/softprops/action-gh-release@v1
         with:
           files: |
             dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List dist folder
+        run: |
+          echo "=== Contents of dist/ ==="
+          ls -la dist/
