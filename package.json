@@ -1,0 +1,31 @@
+{
+  "name": "jump-cli",
+  "version": "1.0.0",
+  "description": "A Node.js CLI tool to bookmark directories and files with aliases for quick navigation",
+  "main": "bin/jump.js",
+  "bin": {
+    "jump": "bin/jump.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "echo \"No linter configured\"",
+    "start": "node bin/jump.js"
+  },
+  "keywords": [
+    "cli",
+    "bookmark",
+    "navigation",
+    "directory",
+    "file",
+    "jump"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "preferGlobal": true
+}
